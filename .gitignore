@@ -1,0 +1,8 @@
+# MACOS #
+#########
+.DS_Store
+
+# CARGO #
+#########
+/target/*
+/Cargo.lock
