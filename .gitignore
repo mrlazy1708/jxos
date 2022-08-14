@@ -2,6 +2,10 @@
 #########
 .DS_Store
 
+#  VSC  #
+#########
+.vscode/*
+
 # CARGO #
 #########
 /target/*
