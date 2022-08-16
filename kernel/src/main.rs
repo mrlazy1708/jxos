@@ -3,6 +3,10 @@
 
 mod sbi;
 
+#[cfg(feature = "test")]
+#[path = "../test/mod.rs"]
+mod test;
+
 core::arch::global_asm! {"
     .section .bss.stack
     .globl stack
@@ -25,10 +29,22 @@ _start:
 #[no_mangle]
 pub extern "C" fn main() -> ! {
     println!("Hello, World!");
-    loop {}
+
+    #[cfg(feature = "test")]
+    test::run_test();
+
+    use sbi::system_reset::*;
+    reset(Type::Shutdown, Reason::NoReason)
 }
 
 #[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
+fn panic(info: &core::panic::PanicInfo) -> ! {
+    if let Some(location) = info.location() {
+        println!("kernel panicked at {}:{}", location.file(), location.line());
+    } else {
+        println!("kernel panicked");
+    }
+
+    use sbi::system_reset::*;
+    reset(Type::Shutdown, Reason::SystemFailure)
 }

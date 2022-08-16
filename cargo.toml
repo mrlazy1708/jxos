@@ -8,3 +8,7 @@ path = "kernel/src/main.rs"
 
 [dependencies]
 riscv = "0.8.0"
+
+[features]
+default = []
+test = []

@@ -3,16 +3,10 @@
 #[macro_export]
 macro_rules! call {
     // v0.1
-    ( $eid: expr; $($arg: expr),* ) => {
-        {
-            let (ret, _) = call!($eid, 0; $($arg),*);
-
-            ret
-        }
-    };
+    ( $eid: expr; $($args: expr),* ) => { call!($eid, 0; $($args),*).0 };
 
     // v0.2
-    ( $eid: expr, $fid: expr; $($arg0: expr $(,$arg1: expr $(,$arg2: expr $(,$arg3: expr $(,$arg4: expr $(,$arg5: expr)?)?)?)?)?)? ) => {
+    ( $eid: expr, $fid: expr; $($arg0: expr $(, $arg1: expr $(, $arg2: expr $(, $arg3: expr $(, $arg4: expr $(, $arg5: expr)?)?)?)?)?)? ) => {
         {
             let (err, ret): (usize, usize);
             unsafe {
@@ -55,7 +49,28 @@ pub mod legacy {
     pub fn shutdown() -> ! {
         call!(SHUTDOWN;);
 
-        unreachable!("should have been shutdown");
+        unreachable!("should have been shutdown")
+    }
+}
+
+pub mod system_reset {
+    const SYSTEM_RESET: usize = 0;
+
+    pub enum Type {
+        Shutdown = 0x00000000,
+        ColdReboot = 0x00000001,
+        WarmReboot = 0x00000002,
+    }
+
+    pub enum Reason {
+        NoReason = 0x00000000,
+        SystemFailure = 0x00000001,
+    }
+
+    pub fn reset(r#type: Type, reason: Reason) -> ! {
+        call!(0x53525354, SYSTEM_RESET; r#type as usize, reason as usize);
+
+        unreachable!("system reset failed")
     }
 }
 

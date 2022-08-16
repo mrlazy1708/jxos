@@ -2,9 +2,9 @@ use core::fmt::Write;
 
 struct Stdout;
 impl Write for Stdout {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        for c in s.chars() {
-            super::legacy::console_putchar(c as usize);
+    fn write_str(&mut self, string: &str) -> core::fmt::Result {
+        for char in string.chars() {
+            super::legacy::console_putchar(char as usize);
         }
         Ok(())
     }
@@ -25,6 +25,6 @@ macro_rules! print {
 #[macro_export]
 macro_rules! println {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        print!($fmt $(, $($arg)+)?);
+        $crate::sbi::console::print(format_args!(concat!($fmt, "\n") $(, $($arg)+)?));
     }
 }
