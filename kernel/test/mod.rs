@@ -1,5 +1,5 @@
-use crate::*;
+mod mm;
 
-pub fn run_test() {
-    panic!("should panic")
+pub fn main() {
+    mm::main();
 }

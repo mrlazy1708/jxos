@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 
+mod mm;
 mod sbi;
 
 #[cfg(feature = "test")]
@@ -15,7 +16,7 @@ stack:
 "}
 
 /* -------------------------------------------------------------------------- */
-/*                                    MAIN                                    */
+/*                                    INIT                                    */
 /* -------------------------------------------------------------------------- */
 
 core::arch::global_asm! {"
@@ -28,10 +29,10 @@ _start:
 
 #[no_mangle]
 pub extern "C" fn main() -> ! {
-    println!("Hello, World!");
+    crate::printk!("Hello, World!");
 
     #[cfg(feature = "test")]
-    test::run_test();
+    test::main();
 
     use sbi::system_reset::*;
     reset(Type::Shutdown, Reason::NoReason)
@@ -40,9 +41,9 @@ pub extern "C" fn main() -> ! {
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
     if let Some(location) = info.location() {
-        println!("kernel panicked at {}:{}", location.file(), location.line());
+        crate::printk!("kernel panicked at {}:{}", location.file(), location.line());
     } else {
-        println!("kernel panicked");
+        crate::printk!("kernel panicked");
     }
 
     use sbi::system_reset::*;

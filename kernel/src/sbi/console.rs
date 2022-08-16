@@ -16,15 +16,8 @@ pub fn print(args: core::fmt::Arguments) {
 }
 
 #[macro_export]
-macro_rules! print {
-    ($fmt: literal $(, $($arg: tt)+)?) => {
-        $crate::sbi::console::print(format_args!($fmt $(, $($arg)+)?));
-    }
-}
-
-#[macro_export]
-macro_rules! println {
-    ($fmt: literal $(, $($arg: tt)+)?) => {
-        $crate::sbi::console::print(format_args!(concat!($fmt, "\n") $(, $($arg)+)?));
+macro_rules! printk {
+    ($fmt: literal $(, $arg: expr)*) => {
+        $crate::sbi::console::print(format_args!(concat!("[KERNEL]: ", $fmt, "\n") $(, $arg)*));
     }
 }
