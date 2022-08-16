@@ -16,7 +16,7 @@ cargo run
 
 ## Test
 
-by passing `test` flag in rustc
+by passing `test` flag to rustc
 
 ```shell
 cargo run --features test
